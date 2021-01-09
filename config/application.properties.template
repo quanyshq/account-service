@@ -1,0 +1,10 @@
+#
+# template for external configuration files that are ignored by Git, 
+# for example:
+# - config/application.properties 
+# - config/application-dev.properties 
+# - config/application-test.properties
+# 
+spring.datasource.url=jdbc:mysql://localhost:3306/account_service_database
+spring.datasource.username=
+spring.datasource.password=

@@ -1,1 +1,1 @@
-# account-service
+# "User Account Service" demo project
