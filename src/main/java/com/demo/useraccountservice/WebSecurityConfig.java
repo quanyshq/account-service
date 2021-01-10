@@ -20,12 +20,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     void configureAuthenticationManagerBuilder(AuthenticationManagerBuilder auth,
-                                               PasswordEncoder passwordEncoder,
                                                @Value("${app.client.username}") String clientUserName,
                                                @Value("${app.client.password}") String clientPassword) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser(clientUserName)
-                .password(passwordEncoder.encode(clientPassword))
+                .password(passwordEncoder().encode(clientPassword))
                 .roles("REST_CLIENT");
     }
 

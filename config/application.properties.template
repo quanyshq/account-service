@@ -8,6 +8,7 @@
 # REST clients use the specified basic authentication username and password to authenticate every request
 app.client.username=
 app.client.password=
+server.port=8080
 spring.datasource.url=jdbc:mysql://localhost:3306/account_service_database
 spring.datasource.username=
 spring.datasource.password=

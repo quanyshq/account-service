@@ -6,6 +6,9 @@ build/
 !**/src/test/**/build/
 /config/*
 !/config/application.properties.template
+!/config/docker-compose.yaml
+!/config/nginx-conf.d/
+!/config/nginx-conf.d/app.conf
 
 ### STS ###
 .apt_generated

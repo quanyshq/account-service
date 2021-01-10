@@ -1,0 +1,46 @@
+version: "3"
+
+volumes:
+  mysql-volume:
+
+services:
+  mysql:
+    image: "mysql/mysql-server:latest"
+    container_name: mysql
+    restart: always
+    volumes:
+      - "mysql-volume:/var/lib/mysql"
+    environment:
+      MYSQL_DATABASE: "user_account_service_db"
+      MYSQL_USER: "<username>"
+      MYSQL_PASSWORD: "<password>"
+
+  user-account-service:
+    image: "user-account-service:0.0.1"
+    build: ..
+    container_name: user-account-service
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      APP_CLIENT_USERNAME: "<rest_client_username>"
+      APP_CLIENT_PASSWORD: "<rest_client_password>"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://mysql:3306/user_account_service_db"
+      SPRING_DATASOURCE_USERNAME: "<username>"
+      SPRING_DATASOURCE_PASSWORD: "<password>"
+      SERVER_PORT: "8080"
+
+  nginx:
+    image: "nginx:stable-alpine"
+    container_name: nginx
+    restart: always
+    depends_on:
+      - user-account-service
+    ports:
+      - "80:80"
+    volumes:
+      - "./nginx-conf.d:/etc/nginx/conf.d"
+
+
+
+
