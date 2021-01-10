@@ -13,4 +13,9 @@ public interface UserAccountService {
      */
     void registerWithPassword(UserAccount userAccount, String password)
             throws IllegalArgumentException, EntityAlreadyExists, ConstraintViolationException;
+
+    /**
+     * @return null if there is no registered user account with the provided credentials
+     */
+    UserAccount authenticateWithPassword(String email, String password);
 }

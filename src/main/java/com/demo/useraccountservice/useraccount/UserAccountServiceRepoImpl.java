@@ -31,4 +31,13 @@ public class UserAccountServiceRepoImpl implements UserAccountService {
         userAccount.setPasswordHash(passwordEncoder.encode(password));
         userAccountRepository.save(userAccount);
     }
+
+    @Override
+    public UserAccount authenticateWithPassword(String email, String password) {
+        var acc = userAccountRepository.findAccountByEmailIgnoreCase(email);
+        if (acc.isEmpty() || password == null || !passwordEncoder.matches(password, acc.get().getPasswordHash())) {
+            return null;
+        }
+        return acc.get();
+    }
 }

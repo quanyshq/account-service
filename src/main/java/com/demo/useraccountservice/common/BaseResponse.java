@@ -9,25 +9,6 @@ public class BaseResponse {
     private Map<String, String> fieldValidationErrors;
     private Object data;
 
-    public BaseResponse(boolean ok, String error, Map<String, String> fieldValidationErrors, Object data) {
-        this.ok = ok;
-        this.error = error;
-        this.fieldValidationErrors = fieldValidationErrors;
-        this.data = data;
-    }
-
-    public BaseResponse(boolean ok, String error) {
-        this.ok = ok;
-        this.error = error;
-    }
-
-    public BaseResponse(Object data) {
-        this.data = data;
-    }
-
-    public BaseResponse() {
-    }
-
     public boolean isOk() {
         return ok;
     }

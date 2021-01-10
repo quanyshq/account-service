@@ -2,20 +2,18 @@ package com.demo.useraccountservice.useraccount;
 
 import com.demo.useraccountservice.common.BaseResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/user-accounts")
+@RequestMapping("/api")
 public class UserAccountController {
     private final UserAccountService userAccountService;
 
@@ -23,30 +21,45 @@ public class UserAccountController {
         this.userAccountService = userAccountService;
     }
 
-    @PostMapping("/")
+    @PostMapping("/user-accounts")
     public ResponseEntity<BaseResponse> registerUserAccount(BindingResult bindingResult,
                                                             @Valid @RequestBody UserAccountRegistrationRequest userAccountRegistrationRequest) {
-        var userAccountResponse = new BaseResponse(userAccountRegistrationRequest);
+        var resp = new BaseResponse();
         if (bindingResult.hasErrors()) {
-            userAccountResponse.setOk(false);
-            userAccountResponse.setError(bindingResult
+            resp.setOk(false);
+            resp.setError(bindingResult
                     .getAllErrors()
                     .stream()
                     .filter(e -> e instanceof FieldError)
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .collect(Collectors.joining(System.lineSeparator()))
             );
-            userAccountResponse.setFieldValidationErrors(bindingResult
+            resp.setFieldValidationErrors(bindingResult
                     .getAllErrors()
                     .stream()
                     .filter(e -> e instanceof FieldError)
                     .map(e -> (FieldError) e)
                     .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage))
             );
-            return new ResponseEntity<>(userAccountResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(resp, HttpStatus.UNPROCESSABLE_ENTITY);
         }
         userAccountService.registerWithPassword(userAccountRegistrationRequest.getUserAccount(), userAccountRegistrationRequest.getPassword());
-        userAccountResponse.setOk(true);
-        return new ResponseEntity<>(userAccountResponse, HttpStatus.CREATED);
+        resp.setOk(true);
+        resp.setData(userAccountRegistrationRequest.getUserAccount());
+        return new ResponseEntity<>(resp, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/authentication-requests")
+    public ResponseEntity<BaseResponse> authenticateUserAccount(@RequestBody String email, @RequestBody String password) {
+        var resp = new BaseResponse();
+        var acc = userAccountService.authenticateWithPassword(email, password);
+        if (acc == null) {
+            resp.setOk(false);
+            resp.setError("User account authentication attempt failed.");
+            return new ResponseEntity<>(resp, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        resp.setOk(true);
+        resp.setData(acc);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 }

@@ -12,14 +12,20 @@ import java.util.List;
 
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<BaseResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
-        return new ResponseEntity<>(new BaseResponse(false, ex.getMessage()), HttpStatus.NOT_FOUND);
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<BaseResponse> handleEntityAlreadyExists(EntityAlreadyExists ex) {
+        var resp = new BaseResponse();
+        resp.setOk(false);
+        resp.setError(ex.getMessage());
+        return new ResponseEntity<>(resp, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({IllegalArgumentException.class, MethodArgumentTypeMismatchException.class, ConversionFailedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<BaseResponse> handleInvalidArgumentException(RuntimeException ex) {
-        return new ResponseEntity<>(new BaseResponse(false, ex.getMessage()), HttpStatus.UNPROCESSABLE_ENTITY);
+        var resp = new BaseResponse();
+        resp.setOk(false);
+        resp.setError(ex.getMessage());
+        return new ResponseEntity<>(resp, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 }

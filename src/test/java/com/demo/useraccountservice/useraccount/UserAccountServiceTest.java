@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -44,5 +46,39 @@ public class UserAccountServiceTest {
         assertThatThrownBy(() -> srv.registerWithPassword(acc, ""))
                 .isInstanceOf(IllegalArgumentException.class);
         verify(repo, times(0)).save(any());
+    }
+
+    @Test
+    void authenticateWithPasswordWhenCredentialsAreValid() {
+        var acc = new UserAccount(1L, "bob@example.com");
+        //noinspection SpellCheckingInspection
+        acc.setPasswordHash("$2y$12$LBD4CPY8MaRlu45zx548Fu6Qsw5W8j5Apna5DLtRoiS3N51DZ.rUG");
+
+        when(repo.findAccountByEmailIgnoreCase("bob@example.com")).thenReturn(Optional.of(acc));
+        var res = srv.authenticateWithPassword("bob@example.com", "123");
+        assertThat(res).isEqualTo(acc);
+    }
+
+
+    @Test
+    void authenticateWithPasswordWhenCredentialsAreNotValid() {
+        var acc = new UserAccount(1L, "bob@example.com");
+        //noinspection SpellCheckingInspection
+        acc.setPasswordHash("$2y$12$LBD4CPY8MaRlu45zx548Fu6Qsw5W8j5Apna5DLtRoiS3N51DZ.rUG");
+
+        when(repo.findAccountByEmailIgnoreCase("bob@example.com")).thenReturn(Optional.of(acc));
+        var res = srv.authenticateWithPassword("bob@example.com", "1234");
+        assertThat(res).isNull();
+    }
+
+    @Test
+    void authenticateWithPasswordWhenCredentialsAreNull() {
+        var acc = new UserAccount(1L, "bob@example.com");
+        //noinspection SpellCheckingInspection
+        acc.setPasswordHash("$2y$12$LBD4CPY8MaRlu45zx548Fu6Qsw5W8j5Apna5DLtRoiS3N51DZ.rUG");
+
+        when(repo.findAccountByEmailIgnoreCase("bob@example.com")).thenReturn(Optional.of(acc));
+        var res = srv.authenticateWithPassword(null, null);
+        assertThat(res).isNull();
     }
 }
