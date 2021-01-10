@@ -12,6 +12,7 @@ import java.util.List;
 
 @ControllerAdvice
 public class GlobalControllerExceptionHandler {
+    @ExceptionHandler({EntityAlreadyExists.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ResponseEntity<BaseResponse> handleEntityAlreadyExists(EntityAlreadyExists ex) {
         var resp = new BaseResponse();

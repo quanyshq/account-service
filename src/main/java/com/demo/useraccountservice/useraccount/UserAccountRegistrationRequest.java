@@ -2,6 +2,7 @@ package com.demo.useraccountservice.useraccount;
 
 
 import javax.persistence.Transient;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import javax.validation.constraints.Size;
 
 public class UserAccountRegistrationRequest {
     @NotNull
+    @Valid
     private UserAccount userAccount;
     @NotEmpty
     @Size(min = 3, max = 255)

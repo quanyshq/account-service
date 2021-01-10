@@ -28,18 +28,28 @@ class UserAccountRegistrationRequestTest {
 
     @Test
     void validateWhenItIsValid() {
+        var acc = new UserAccount(1L, "bob@example.com");
         var req = new UserAccountRegistrationRequest();
-        req.setUserAccount(new UserAccount());
+        req.setUserAccount(acc);
         req.setPassword("123");
         var violations = validator.validate(req);
         assertThat(violations).isEmpty();
     }
-
 
     @Test
     void validateWhenItIsEmpty() {
         var req = new UserAccountRegistrationRequest();
         var violations = validator.validate(req);
         assertThat(violations).extracting(v -> v.getPropertyPath().toString()).contains("userAccount", "password");
+    }
+
+    @Test
+    void validateWhenUserAccountEmailIsInvalid() {
+        var acc = new UserAccount(1L, "bob @ example.com");
+        var req = new UserAccountRegistrationRequest();
+        req.setUserAccount(acc);
+        req.setPassword("123");
+        var violations = validator.validate(req);
+        assertThat(violations).extracting(v -> v.getPropertyPath().toString()).contains("userAccount.email");
     }
 }
