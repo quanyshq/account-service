@@ -1,7 +1,6 @@
 FROM openjdk:11.0.9.1-jre-buster
 RUN addgroup --system app && adduser --system app --ingroup app
 USER app:app
-VOLUME /var/lib/mysql
 
 COPY /build/libs/user-account-service-0.0.1-SNAPSHOT.jar /usr/app/user-account-service.jar
 WORKDIR /usr/app
